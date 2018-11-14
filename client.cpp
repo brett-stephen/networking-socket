@@ -18,27 +18,23 @@ int main(int argc, int argv[])
 	 // Usually in real applications, the following
 	 // will be put into a loop. 
 	 try {
+	    // Receive the frame from server
 	    client_socket >> frame;
+
+	    // Split the parity bit from the rest of the frame
 	    received_parbit=frame[0];
 	    frame=frame.substr(1);
-	    // std::cout<<frame<<parbit<<std::endl;
+	    
 	    expected_parbit=getParity(frame);
 
-	    if(expected_parbit==received_parbit)
-	       client_socket2 << "ACK";
-	    else
-	       client_socket2 << "NACK";
-	    
+	    // Select the response and send it to the server
+	    std::string response = (expected_parbit == received_parbit) ? "ACK" : "NACK";
+	    client_socket2 << response;
 	 }
 	 catch(SocketException&){
 	 }
 	 std::cout << "We received this response from the server:\n\"" << frame << "\"\n";
-      
       }
-
-
-      
-      
    }
    catch(SocketException& e){
       std::cout << "Exception was caught:" << e.description() << "\n";

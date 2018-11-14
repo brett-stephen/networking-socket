@@ -24,6 +24,14 @@ int main(int argc, int argv[])
 	    // Split the parity bit from the rest of the frame
 	    received_parbit=frame[0];
 	    frame=frame.substr(1);
+ 
+            std::cout << "Frame: " << frame << std::endl;
+
+	    
+            if (frame == "01111110") {
+              std::cout << "Reached the end of the file, exiting." << std::endl;
+              return 0;
+	    }
 	    
 	    expected_parbit=getParity(frame);
 
@@ -35,7 +43,7 @@ int main(int argc, int argv[])
 	 catch(SocketException&){
 	 }
 	 std::cout << "We received this frame from the server:\n\"" << frame << "\"\n";
-	 std::cout<<"Client is sending a "<<response<<std::endl;
+	 std::cout<<"Client is sending a "<<response<<std::endl<<std::endl;
       }
    }
    catch(SocketException& e){

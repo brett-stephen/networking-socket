@@ -14,6 +14,7 @@ int main(int argc, int argv[])
    fileParser FileParser;
    
    try{
+      std::cout << "eof " << FileParser.eof << std::endl;
       // Create the socket
       ServerSocket server(30000);
       ServerSocket Ack(30001);
@@ -50,6 +51,9 @@ int main(int argc, int argv[])
 	       sleep(3); // TODO: Remove when we wanna go full speed
 
 	       
+
+	       
+	       
 	       std::string ack;
                std::string parity_bit;
 
@@ -57,6 +61,10 @@ int main(int argc, int argv[])
 		  //sequence_counter = (sequence_counter + 1) % 4;
 
 		  data = FileParser.readString();
+	       }
+	       
+	       if (FileParser.eof) {
+		 data = "01111110";
 	       }
 
 	       //std::string data = test[sequence_counter];
@@ -83,6 +91,14 @@ int main(int argc, int argv[])
 
 	       // Send the line 
 	       new_sock << data;
+	       
+	       // Alright guys, here's what the frick is happening.
+	       // If we've reached the end of the file, after 
+	       // we've sent the last 01111110, we don't care
+	       // about the response, just quit.
+	       if (FileParser.eof) {
+		 return 0;
+	       }
 
 	       // Receive the Ack/Nak
 	       new_sock2 >> ack;
@@ -95,6 +111,8 @@ int main(int argc, int argv[])
 		  //std::cout << "Bad" << std::endl;
 		  prev_ack = "NAK";
 	       }
+	       
+
 	       
 	       frame_counter++;
 	    }

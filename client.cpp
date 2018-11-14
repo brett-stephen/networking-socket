@@ -2,6 +2,7 @@
 #include "SocketException.h"
 #include <iostream>
 #include <string>
+#include"generator.cpp"
 
 int main(int argc, int argv[])
 {
@@ -12,17 +13,26 @@ int main(int argc, int argv[])
       ClientSocket client_socket2("localhost", 30001);
       
       while(true){ 
-	 std::string reply;
+	 std::string frame, received_parbit, expected_parbit;
+	 
 	 // Usually in real applications, the following
 	 // will be put into a loop. 
 	 try {
-	    client_socket << "Test message.";
-	    client_socket >> reply;
-	    client_socket2 << "ACK";
+	    client_socket >> frame;
+	    received_parbit=frame[0];
+	    frame=frame.substr(1);
+	    // std::cout<<frame<<parbit<<std::endl;
+	    expected_parbit=getParity(frame);
+
+	    if(expected_parbit==received_parbit)
+	       client_socket2 << "ACK";
+	    else
+	       client_socket2 << "NACK";
+	    
 	 }
 	 catch(SocketException&){
 	 }
-	 std::cout << "We received this response from the server:\n\"" << reply << "\"\n";
+	 std::cout << "We received this response from the server:\n\"" << frame << "\"\n";
       
       }
 

@@ -8,6 +8,7 @@ int main()
     string file = "test_networking_doc.txt";
 
     fileParser a;
+    /*
     for(int i=0; i<2000; i++)
     {
             myvec=a.read();
@@ -16,6 +17,15 @@ int main()
             }
 
     }
+    */
+    cout<<" r1 "<<a.readString()<<endl;
+    cout<<" r2 "<<a.readString()<<endl;
+    cout<<" r3 "<<a.readString()<<endl;
+    cout<<" r4 "<<a.readString()<<endl;
+    cout<<" r5 "<<a.readString()<<endl;
+
+
+
     //cout<<"array: "<<a.getFrame(1)<<endl;
 
 

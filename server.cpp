@@ -4,11 +4,15 @@
 #include <string>
 #include <iostream>
 #include "generator.cpp"
-#include <pthread>
+#include "fileParser.cpp"
+#include <queue>
  
 int main(int argc, int argv[])
 {
    std::cout << "runningData....\n";
+
+   fileParser FileParser;
+   
    try{
       // Create the socket
       ServerSocket server(30000);
@@ -32,22 +36,30 @@ int main(int argc, int argv[])
 	    // and have to be resent.
 	    int frame_counter = 0;
 	    int failed_frame = rand() % 5;
-	    std::string test[4]= {"Lethbridge", "Alberta","Canada","Earth"}; // TODO: Remove this once we have the file input
+	    //std::string test[4]= {"Lethbridge", "Alberta","Canada","Earth"}; // TODO: Remove this once we have the file input
 
 	    std::string prev_ack;
-	    int sequence_counter = 0;	    
+	    int sequence_counter = 0;
+
+	    std::string data  = FileParser.readString();
+	    //Read the first 64 characters
+	    //of the file before entering
+	    //the loop
 	       
 	    while (true){
 	       sleep(3); // TODO: Remove when we wanna go full speed
-	    
+
+	       
 	       std::string ack;
                std::string parity_bit;
 
 	       if (prev_ack == "ACK") {
-		  sequence_counter = (sequence_counter + 1) % 4;
-	        }
+		  //sequence_counter = (sequence_counter + 1) % 4;
 
-	       std::string data = test[sequence_counter];
+		  data = FileParser.readString();
+	       }
+
+	       //std::string data = test[sequence_counter];
 	       
 	       parity_bit = getParity(data);
 	       if (frame_counter > 4) {
@@ -76,11 +88,11 @@ int main(int argc, int argv[])
 	       new_sock2 >> ack;
 	       
 	       if (ack == "ACK") {
-		  std::cout << "Good" << std::endl;
+		  //std::cout << "Good" << std::endl;
 		  prev_ack = "ACK";
 	       }
 	       else{
-		  std::cout << "Bad" << std::endl;
+		  //std::cout << "Bad" << std::endl;
 		  prev_ack = "NAK";
 	       }
 	       

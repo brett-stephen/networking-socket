@@ -14,7 +14,7 @@ int main(int argc, int argv[])
       
       while(true){ 
 	 std::string frame, received_parbit, expected_parbit;
-	 
+	 std::string response;
 	 // Usually in real applications, the following
 	 // will be put into a loop. 
 	 try {
@@ -28,12 +28,14 @@ int main(int argc, int argv[])
 	    expected_parbit=getParity(frame);
 
 	    // Select the response and send it to the server
-	    std::string response = (expected_parbit == received_parbit) ? "ACK" : "NACK";
+	    response = (expected_parbit == received_parbit) ? "ACK" : "NACK";
+	
 	    client_socket2 << response;
 	 }
 	 catch(SocketException&){
 	 }
-	 std::cout << "We received this response from the server:\n\"" << frame << "\"\n";
+	 std::cout << "We received this frame from the server:\n\"" << frame << "\"\n";
+	 std::cout<<"Client is sending a "<<response<<std::endl;
       }
    }
    catch(SocketException& e){

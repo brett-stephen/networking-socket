@@ -1,7 +1,38 @@
 #include <fstream>
-#include "fileParser.h"
+
 #include <cmath>
 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+
+using namespace std;
+
+class fileParser
+{
+    public:
+    fileParser();
+   ~fileParser();
+    vector<string> read();
+    string readString();
+    string write(string);
+    int getFrameCount();
+    void setFrameCount(int);
+
+
+    //data memebers
+    int vectorIndex;
+    int lineCount;
+    int frameCount;
+    int charCount;
+    fstream file;
+    int line_num;
+    vector<string> fileLine;
+    string textline;
+    int index;
+};
 
 fileParser::fileParser()
 {
@@ -13,6 +44,7 @@ fileParser::fileParser()
     lineCount = 0;
     index = 0;
     eof=0;
+    vectorIndex = 0;
 
 }
 
@@ -79,5 +111,25 @@ vector<string> fileParser::read(){
         // charCount = len;
 }
 
+string fileParser::readString()
+{
+    while(fileLine.size() != 0)
+    {
+        string temp = fileLine[0]; //saves string in first index
+        fileLine.erase(fileLine.begin()); //erases first index
+
+        return temp; //returns string from first index
+    }
+
+    vector<string> vec = read();
+    string temp = fileLine[0]; //saves string in first index
+    fileLine.erase(fileLine.begin()); //erases first index
+
+
+    //vectorIndex++;
+    //if (vectorIndex>=vec.size())
+    //    vectorIndex = 0;
+    return temp;
+}
 
 

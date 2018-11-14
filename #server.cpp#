@@ -4,7 +4,8 @@
 #include <string>
 #include <iostream>
 #include "generator.cpp"
-#include <pthread>
+#include <pthread.h>
+#include <stdio.h>
  
 int main(int argc, int argv[])
 {

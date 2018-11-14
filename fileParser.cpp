@@ -32,11 +32,12 @@ class fileParser
     vector<string> fileLine;
     string textline;
     int index;
+    bool eof;
 };
 
 fileParser::fileParser()
 {
-    file.open("test_networking_doc.txt");
+    file.open("test_short_networking_doc.txt");
     if (file.is_open()){
         cout<<"The file has been found"<<endl;
     }
@@ -81,11 +82,10 @@ return frameCount;
 vector<string> fileParser::read(){
 
     string line;
-    cout<<"Flag:"<<eof<<endl;
     getline (file, line);
     if (file.eof())
     {
-        cout<<"End of file."<<endl;
+        //cout<<"End of file."<<endl;
         eof =1;
 
     }

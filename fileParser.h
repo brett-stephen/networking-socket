@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+
 using namespace std;
 
 class fileParser
@@ -14,10 +15,14 @@ class fileParser
     fileParser();
    ~fileParser();
     vector<string> read();
+    string readString();
     string write(string);
     int getFrameCount();
     void setFrameCount(int);
+
+
     //data memebers
+    int vectorIndex;
     int lineCount;
     int frameCount;
     int charCount;

@@ -2,8 +2,9 @@
 #include "SocketException.h"
 #include <stdlib.h> 
 #include <string>
-#include<iostream>
+#include <iostream>
 #include "generator.cpp"
+#include <pthread>
  
 int main(int argc, int argv[])
 {
@@ -31,23 +32,18 @@ int main(int argc, int argv[])
 	    // and have to be resent.
 	    int frame_counter = 0;
 	    int failed_frame = rand() % 5;
-	    string test[4]= {"Lethbridge", "Alberta","Canada","Earth"};
-	    int data_counter=0;
+	    std::string test[4]= {"Lethbridge", "Alberta","Canada","Earth"}; // TODO: Remove this once we have the file input
 
 	    std::string prev_ack;
-	    int sequence_counter = 0;
-	    
+	    int sequence_counter = 0;	    
 	       
 	    while (true){
-	       sleep(3);
+	       sleep(3); // TODO: Remove when we wanna go full speed
 	    
-	    
-	       //data_counter=(data_counter +1)%4;
 	       std::string ack;
                std::string parity_bit;
 
-	       if (prev_ack == "ACK")
-	       {
+	       if (prev_ack == "ACK") {
 		  sequence_counter = (sequence_counter + 1) % 4;
 	        }
 
@@ -62,28 +58,30 @@ int main(int argc, int argv[])
 		  failed_frame = rand() % 5;
 	       }
 
-	       std::cout << failed_frame << " " << frame_counter << std::endl;
+	       std::cout << "Failed frame: " << failed_frame << " Frame counter: " << frame_counter << std::endl;
 	       
 	       if (failed_frame == frame_counter) {
 		  // The current frame is the frame to
 		  // fail, so flip to parity bit.
 		  parity_bit = (parity_bit == "1") ? "0" : "1";
 	       }
-	       
+
+	       // Prepend the parity bit to the data
 	       data = parity_bit + data;
 
-	       //std::cout<<data;
+	       // Send the line 
 	       new_sock << data;
+
+	       // Receive the Ack/Nak
 	       new_sock2 >> ack;
+	       
 	       if (ack == "ACK") {
 		  std::cout << "Good" << std::endl;
 		  prev_ack = "ACK";
-		  // std::cout<<ack<<std::endl;
 	       }
 	       else{
 		  std::cout << "Bad" << std::endl;
 		  prev_ack = "NAK";
-		  // std::cout<<ack<<std::endl;
 	       }
 	       
 	       frame_counter++;

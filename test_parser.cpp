@@ -8,7 +8,7 @@ int main()
     string file = "test_networking_doc.txt";
 
     fileParser a;
-    for(int i=0; i<=100; i++)
+    for(int i=0; i<2000; i++)
     {
             myvec=a.read();
             for(int i=0; i<myvec.size();i++){

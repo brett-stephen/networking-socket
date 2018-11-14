@@ -26,5 +26,6 @@ class fileParser
     vector<string> fileLine;
     string textline;
     int index;
+    bool eof;
 };
 #endif

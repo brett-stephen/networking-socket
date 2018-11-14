@@ -12,6 +12,7 @@ fileParser::fileParser()
     charCount= 0;
     lineCount = 0;
     index = 0;
+    eof=0;
 
 }
 
@@ -48,8 +49,14 @@ return frameCount;
 vector<string> fileParser::read(){
 
     string line;
-
+    cout<<"Flag:"<<eof<<endl;
     getline (file, line);
+    if (file.eof())
+    {
+        cout<<"End of file."<<endl;
+        eof =1;
+
+    }
     double len = line.length();
     double b = len/64.00;
 

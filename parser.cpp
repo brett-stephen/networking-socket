@@ -18,7 +18,6 @@ int main(){
                     getline (testFile, line);
                     int len = line.length();
                     int a = len/64;
-                    int b = len % 64;
                     int j = 0;
                     for (int i=0; i<= a; i++)
                     {
@@ -26,7 +25,7 @@ int main(){
 
                         //send frame here//
 
-                        //cout<<sub<<endl;
+                        cout<<sub<<endl;
                         j=j+ 63;
                     }
 

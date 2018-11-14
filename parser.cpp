@@ -4,7 +4,22 @@
 
 using namespace std;
 
-int main(){
+string file;
+string str;
+
+string reassembly(string frame, string file){
+   file.append(frame);
+
+    cout<<file<<endl;
+    return file;
+}
+
+void stringTotal(string a)
+{
+    str=str+a;
+}
+
+void deassembly(){
     ifstream testFile("test_networking_doc.txt");
     string line;
     int charCount;
@@ -23,8 +38,7 @@ int main(){
                     for (int i=0; i<= a; i++)
                     {
                         string sub = line.substr(j,j+63);
-
-                        //send frame here//
+                        stringTotal(sub);
 
                         //cout<<sub<<endl;
                         j=j+ 63;
@@ -35,4 +49,13 @@ int main(){
 
     }
 
+}
+
+
+int main(){
+
+deassembly();
+string file2 = reassembly(str,file);
+
+ return 0;
 }

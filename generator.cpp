@@ -41,11 +41,18 @@ bool generateParity(unsigned int n)
 }
 
 //test function
-int main()
+string getParity(std::string str)
 {
-    string str = "ABF";
-    int sum = stringSum(str);
-    cout<<"Parity for "<<sum<<" is: "<<generateParity(sum);
+   int sum = stringSum(str);
+   bool par;
+   string parbit;
+   par=generateParity(sum);
 
-    return 0;
+   if(par)
+      parbit="1";
+   else
+      parbit="0";
+   
+    return parbit;
 }
+

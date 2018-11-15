@@ -107,35 +107,37 @@ vector<string> fileParser::read(){
         j=j+ 64;
         temp=fileLine;
     }
-        return temp;
-        // charCount = len;
+    
+    return temp;
 }
 
-string fileParser::readString()
-{
-    cout<<"fileLine vector size = "<<fileLine.size()<<endl;
+string fileParser::readString() {  
+  /* 
+   * Return 64 character chunks of a file from 
+   * `fileLine` buffer created by `fp.read()`.
+   * 
+   * return std::string
+   */
+    bool existing_buffer = !fileLine.empty();
     
-    if(fileLine.size() != 0)
-    {
-        string temp = fileLine[0]; //saves string in first index
-        fileLine.erase(fileLine.begin()); //erases first index
-	
-	if(fileLine.size() == 0)
-	{
-	  cout<<"Appending \\n to "<<temp<<endl;
-	  temp += "\n";
-	}
-        return temp; //returns string from first index
+    if (!existing_buffer) {
+      read(); // Fill the fileLine buffer
     }
     
-    vector<string> vec = read();
-    string temp = fileLine[0]; //saves string in first index
-    fileLine.erase(fileLine.begin()); //erases first index
-   
-    //vectorIndex++;
-    //if (vectorIndex>=vec.size())
-    //    vectorIndex = 0;
-    return temp;
+    // Psuedo 'Pop' operation, grab the first 
+    // chunk and shuffle the rest forward.
+    std::string character_chunk = fileLine.front();
+    fileLine.erase(fileLine.begin()); 
+    
+    bool on_last_chunk = fileLine.empty();
+    
+    if (on_last_chunk) {
+      // Indicate to the print queue that we're supposed
+      // to flush the buffer now by adding a newline character.
+      character_chunk += "\n";
+    }
+    
+    return character_chunk;
 }
 
 

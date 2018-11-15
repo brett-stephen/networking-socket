@@ -1,9 +1,7 @@
 # Makefile for the socket programming tutorial 
 #
-
-server = ServerSocket.o Socket.o server.o ServerSocket.h Socket.h SocketException.h
-client = ClientSocket.o Socket.o client.o ServerSocket.h Socket.h SocketException.h
-
+server = ServerSocket.o Socket.o server.o ServerSocket.h Socket.h SocketException.h 
+client = ClientSocket.o Socket.o client.o ServerSocket.h Socket.h SocketException.h 
 
 all : server client
 
@@ -23,4 +21,4 @@ client: client.cpp
 
 
 clean:
-	rm -f *.o simple_server simple_client
+	rm -f *.o simple_server simple_client 

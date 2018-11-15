@@ -10,11 +10,10 @@
 int main(int argc, int argv[])
 {
    std::cout << "runningData....\n";
-
+   
    fileParser FileParser;
    
    try{
-      std::cout << "eof " << FileParser.eof << std::endl;
       // Create the socket
       ServerSocket server(30000);
       ServerSocket Ack(30001);
@@ -30,45 +29,38 @@ int main(int argc, int argv[])
 	 // a new thread here and pass new_sock to it.
 	 // The thread will use new_sock to communicate
 	 // with the client.
+	 
 	 try{
-	    // Every five frames, one should have a
-	    // reversed parity bit. The frame with
-	    // the reversed parity should receive a NACK
-	    // and have to be resent.
 	    int frame_counter = 0;
 	    int failed_frame = rand() % 5;
-	    //std::string test[4]= {"Lethbridge", "Alberta","Canada","Earth"}; // TODO: Remove this once we have the file input
-
-	    std::string prev_ack;
 	    int sequence_counter = 0;
 
+	    std::string previous_client_response;
+	    std::string client_response;
+	    std::string parity_bit;
+
+	    // Read 64 characters from the file parser
 	    std::string data  = FileParser.readString();
-	    //Read the first 64 characters
-	    //of the file before entering
-	    //the loop
 	       
 	    while (true){
-	       sleep(3); // TODO: Remove when we wanna go full speed
+	       sleep(2); // TODO: Remove when we wanna go full speed
 
-	       
-
-	       
-	       
-	       std::string ack;
-               std::string parity_bit;
-
-	       if (prev_ack == "ACK") {
-		  //sequence_counter = (sequence_counter + 1) % 4;
-
+	       if (previous_client_response == ACK) {
+		 // Get the next string to send
 		  data = FileParser.readString();
+	       } else {
+		 // Send the same string over again
 	       }
 	       
 	       if (FileParser.eof) {
-		 data = "01111110";
+		 // Nothing more to send 
+		 // signal the client to close.
+		 data = END_TRANSMISSION;
 	       }
 
-	       //std::string data = test[sequence_counter];
-	       
+	       // Every five frames, one should have a
+	       // reversed parity bit that should illicit 
+	       // a NAK from the client to resend the data.
 	       parity_bit = getParity(data);
 	       if (frame_counter > 4) {
 		  // Five frames have passed, so we
@@ -77,8 +69,6 @@ int main(int argc, int argv[])
 		  frame_counter = 0;
 		  failed_frame = rand() % 5;
 	       }
-
-	       std::cout << "Failed frame: " << failed_frame << " Frame counter: " << frame_counter << std::endl;
 	       
 	       if (failed_frame == frame_counter) {
 		  // The current frame is the frame to
@@ -86,33 +76,26 @@ int main(int argc, int argv[])
 		  parity_bit = (parity_bit == "1") ? "0" : "1";
 	       }
 
-	       // Prepend the parity bit to the data
-	       data = parity_bit + data;
+	       std::cout << "Failed frame: " << failed_frame << " Frame counter: " << frame_counter << std::endl;
 
-	       // Send the line 
-	       new_sock << data;
-	       
-	       // Alright guys, here's what the frick is happening.
-	       // If we've reached the end of the file, after 
-	       // we've sent the last 01111110, we don't care
-	       // about the response, just quit.
+	       // Send that gucci data
+	       new_sock << parity_bit + data;
+
 	       if (FileParser.eof) {
+		 // After we've sent END_TRANSMISSION we
+	         // don't need to receive anything else.
 		 return 0;
 	       }
 
-	       // Receive the Ack/Nak
-	       new_sock2 >> ack;
+	       // Receive ACK/NAK response 
+	       new_sock2 >> client_response;
 	       
-	       if (ack == "ACK") {
-		  //std::cout << "Good" << std::endl;
-		  prev_ack = "ACK";
+	       if (client_response == ACK) {
+		  previous_client_response = ACK;
 	       }
 	       else{
-		  //std::cout << "Bad" << std::endl;
-		  prev_ack = "NAK";
+		  previous_client_response = NAK;
 	       }
-	       
-
 	       
 	       frame_counter++;
 	    }

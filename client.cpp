@@ -52,18 +52,20 @@ int main(int argc, int argv[])
 	    // Split the parity bit from the rest of the frame
 	    received_parbit=frame[0];
 	    frame=frame.substr(1);
- 
-	    stackCheck(frame);
-	    
-            if (frame == "01111110") {
-              std::cout << "Reached the end of the file, exiting." << std::endl;
-              return 0;
-	    }
 	    
 	    expected_parbit=getParity(frame);
 
 	    // Select the response and send it to the server
-	    response = (expected_parbit == received_parbit) ? "ACK" : "NACK";
+	    response = (expected_parbit == received_parbit) ? ACK : NAK;
+ 
+	    if (response != NAK) {
+	      stackCheck(frame);
+	    }
+	    
+            if (frame == END_TRANSMISSION) {
+              std::cout << "Reached the end of the file, exiting." << std::endl;
+              return 0;
+	    }
 	
 	    client_socket2 << response;
 	 }

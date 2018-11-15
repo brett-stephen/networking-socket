@@ -37,7 +37,7 @@ class fileParser
 
 fileParser::fileParser()
 {
-    file.open("test_short_networking_doc.txt");
+    file.open("test_networking_doc.txt");
     if (file.is_open()){
         cout<<"The file has been found"<<endl;
     }
@@ -113,19 +113,25 @@ vector<string> fileParser::read(){
 
 string fileParser::readString()
 {
-    while(fileLine.size() != 0)
+    cout<<"fileLine vector size = "<<fileLine.size()<<endl;
+    
+    if(fileLine.size() != 0)
     {
         string temp = fileLine[0]; //saves string in first index
         fileLine.erase(fileLine.begin()); //erases first index
-
+	
+	if(fileLine.size() == 0)
+	{
+	  cout<<"Appending \\n to "<<temp<<endl;
+	  temp += "\n";
+	}
         return temp; //returns string from first index
     }
-
+    
     vector<string> vec = read();
     string temp = fileLine[0]; //saves string in first index
     fileLine.erase(fileLine.begin()); //erases first index
-
-
+   
     //vectorIndex++;
     //if (vectorIndex>=vec.size())
     //    vectorIndex = 0;

@@ -2,7 +2,35 @@
 #include "SocketException.h"
 #include <iostream>
 #include <string>
+#include<queue>
 #include"generator.cpp"
+
+queue <string> receivedLine;
+
+// Takes a string, pushes it into queue, searches for \n,
+// writes out line if it finds \n
+void stackCheck(string str)
+{
+	//cout<<"pushing string to stack"<<endl;
+    receivedLine.push(str);
+
+    string currentStr = receivedLine.back();
+
+    size_t found = currentStr.find("\n"); // returns position at found character
+
+    if (found!=string::npos)
+    {
+        //cout << "\\n found at: " << found << '\n';
+        int sz = receivedLine.size();
+
+        for(int i = 0; i<sz; i++)
+        {
+            cout<<receivedLine.front();
+            receivedLine.pop();
+        }
+        //cout<<"removing queue "<<receivedLine.size()<<endl;
+    }
+}
 
 int main(int argc, int argv[])
 {
@@ -25,8 +53,7 @@ int main(int argc, int argv[])
 	    received_parbit=frame[0];
 	    frame=frame.substr(1);
  
-            std::cout << "Frame: " << frame << std::endl;
-
+	    stackCheck(frame);
 	    
             if (frame == "01111110") {
               std::cout << "Reached the end of the file, exiting." << std::endl;
@@ -42,7 +69,8 @@ int main(int argc, int argv[])
 	 }
 	 catch(SocketException&){
 	 }
-	 std::cout << "We received this frame from the server:\n\"" << frame << "\"\n";
+
+	 //std::cout << "We received this frame from the server:\n\"" << frame << "\"\n";
 	 std::cout<<"Client is sending a "<<response<<std::endl<<std::endl;
       }
    }

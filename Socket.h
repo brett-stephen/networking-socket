@@ -16,6 +16,10 @@ const int MAXHOSTNAME = 200;
 const int MAXCONNECTIONS = 5;
 const int MAXRECV = 500;
  
+const std::string ACK = "ACK";
+const std::string NAK = "NAK";
+const std::string END_TRANSMISSION = "01111110";
+
 class Socket
 {
 public:

@@ -1,9 +1,9 @@
 #include "ClientSocket.h"
-#include "SocketException.h"
+#include "../SocketException.h"
 #include <iostream>
 #include <string>
-#include<queue>
-#include"generator.cpp"
+#include <queue>
+#include "./../server/generator.cpp"
 
 queue <string> receivedLine;
 

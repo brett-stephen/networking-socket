@@ -39,7 +39,7 @@ fileParser::fileParser()
 {
     file.open("test_networking_doc.txt");
     if (file.is_open()){
-        cout<<"The file has been found"<<endl;
+        //cout<<"The file has been found"<<endl;
     }
     charCount= 0;
     lineCount = 0;

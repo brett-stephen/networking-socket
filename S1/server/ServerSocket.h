@@ -3,7 +3,7 @@
 #ifndef ServerSocket_class
 #define ServerSocket_class
 
-#include "Socket.h"
+#include "./../Socket.h"
 
 class ServerSocket : private Socket
 {

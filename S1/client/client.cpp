@@ -64,6 +64,7 @@ int main(int argc, int argv[])
 	    
             if (frame == END_TRANSMISSION) {
               std::cout << "Reached the end of the file, exiting." << std::endl;
+	      client_socket2 << response;
               return 0;
 	    }
 	

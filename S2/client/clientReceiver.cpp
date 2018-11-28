@@ -78,19 +78,3 @@ public:
     vector<string> loadedString;
 };
 */
-
-int main()
-{
-
-    stackCheck("test1");
-    stackCheck("test2");
-    stackCheck("test3");
-    stackCheck("test4");
-    stackCheck("test5 \n");
-    stackCheck("test6");
-    stackCheck("test7");
-    stackCheck("test8");
-    stackCheck("test9 \n");
-
-    return 0;
-}

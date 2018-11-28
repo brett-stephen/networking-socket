@@ -1,7 +1,5 @@
 #include <fstream>
-
 #include <cmath>
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -78,7 +76,6 @@ return frameCount;
 //Input: none
 //Output: A vector which contains frames of a max size of 64 characters for
 //one text line
-
 vector<string> fileParser::read(){
 
     string line;

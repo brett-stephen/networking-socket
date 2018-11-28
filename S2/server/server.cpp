@@ -68,13 +68,15 @@ bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
       // std::cout << "Failed frame: " << failed_frame << " Frame counter: " << frame_counter << std::endl;
       
       
-      // Send the data
-      std::cout<<"SENDING: "<< data <<std::endl;
+      // Send the data    
+      std::cout<<"SENDING: "<< data.substr (0,data.length()-1) <<std::endl; // a quick hack to ignore the \n when couting the outgoing data
       new_sock << parity_bit + data;
       
       // Receive ACK/NAK response 
       new_sock2 >> client_response;
       std::cout<<"RECEIVED: "<< client_response <<std::endl;
+      
+       std::cout<<std::endl; //a space to seperate messages.
       
       if (client_response == ACK) {
 	previous_client_response = ACK;
@@ -82,9 +84,8 @@ bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
 	if (FileParser.eof) 
 	{
 	  continueTrasfer = false; 
-	  std::cout<<"TRANSMISSION END. SERVER DISCONNECT."<< data <<std::endl;
+	  std::cout<<"TRANSMISSION END. SERVER DISCONNECT."<<std::endl;
 	}
-	  //return true;
       }
       else{
 	previous_client_response = NAK;

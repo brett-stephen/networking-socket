@@ -11,7 +11,7 @@
 bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
 {
   fileParser FileParser;
-  std::cout<< "client is requesting a connection"<< std::endl;
+  std::cout<< "New connection with client started."<< std::endl;
   
   // For multiple threading, you need to create
   // a new thread here and pass new_sock to it.
@@ -32,15 +32,13 @@ bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
     std::string data  = FileParser.readString();
     bool continueTrasfer = true;
     
-    bool eof;
+    bool eof=false;
     
     while (continueTrasfer){ //continuely sends out data while not eof
-      //sleep(2); // TODO: Remove when we wanna go full speed
       
-      if (previous_client_response == ACK) {
-	// Get the next string to send
-	std::cout<<"Moving onto next line"<<std::endl;
-	data = FileParser.readString();
+      if (previous_client_response == ACK){
+	
+	data = FileParser.readString(); //Gets next string to send
 	
 	
 	if (FileParser.eof){
@@ -48,12 +46,6 @@ bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
 	  eof = true;
 	}
       } 
-      else 
-      {
-	// Send the same string over again
-	
-      }
-      
       
       // Every five frames, one should have a
       // reversed parity bit that should illicit 
@@ -77,17 +69,21 @@ bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
       
       
       // Send the data
-      std::cout<<"Outgoing data is : "<< data <<std::endl;
+      std::cout<<"SENDING: "<< data <<std::endl;
       new_sock << parity_bit + data;
       
       // Receive ACK/NAK response 
       new_sock2 >> client_response;
+      std::cout<<"RECEIVED: "<< client_response <<std::endl;
       
       if (client_response == ACK) {
 	previous_client_response = ACK;
 	
-	if (eof == true) 
-	  continueTrasfer = false; std::cout<<"Client received END transmission, stop disconnect from socket."<< data <<std::endl;
+	if (FileParser.eof) 
+	{
+	  continueTrasfer = false; 
+	  std::cout<<"TRANSMISSION END. SERVER DISCONNECT."<< data <<std::endl;
+	}
 	  //return true;
       }
       else{
@@ -108,8 +104,8 @@ bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
 
 
 
-  int main(int argc, int argv[])
-  {
+int main(int argc, int argv[])
+{
     std::cout << "runningData....\n"<<endl;
     
     try{

@@ -40,9 +40,12 @@ int main(int argc, int argv[])
       ClientSocket client_socket("localhost", 30000);
       ClientSocket client_socket2("localhost", 30001);
       
-      while(true){ 
+      bool continueTrasfer = true;
+      
+      while(continueTrasfer){ 
 	 std::string frame, received_parbit, expected_parbit;
 	 std::string response;
+	 
 	 // Usually in real applications, the following
 	 // will be put into a loop. 
 	 try {
@@ -64,7 +67,7 @@ int main(int argc, int argv[])
 	    
             if (frame == END_TRANSMISSION) {
               std::cout << "Reached the end of the file, exiting." << std::endl;
-              return 0;
+              continueTrasfer = false; 
 	    }
 	
 	    client_socket2 << response;
@@ -73,7 +76,7 @@ int main(int argc, int argv[])
 	 }
 
 	 //std::cout << "We received this frame from the server:\n\"" << frame << "\"\n";
-	 std::cout<<"Client is sending a "<<response<<std::endl<<std::endl;
+	 //std::cout<<"Client is sending a "<<response<<std::endl<<std::endl;
       }
    }
    catch(SocketException& e){

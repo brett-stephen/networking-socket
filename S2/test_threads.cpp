@@ -7,49 +7,46 @@ To run: ./test_threads
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <queue>
+#include "server/ServerSocket.h"
 
-void *print_message(void *ptr);
+void *use_socket(void *ptr);
 
-int main() {
+struct ThreadArg {
+  // Used to send more than one argument 
+  // to `transferData`, where we need two 
+  // sockets
+  ServerSocket one; /* socket descriptor */
+  ServerSocket two; /* file descriptor */
+};
+
+int main(int argc, char* argv[]) {
 
   pthread_t thread1; 
-  pthread_t thread2; 
   
-  // The tutorial is written in C, so character array pointers 
-  // (const char *message) are used instead of std::string, etc.
-  const char *message1 = "Thread 1"; 
-  const char *message2 = "Thread 2"; 
+  // Create two sockets
+  ServerSocket *sock1;
+  ServerSocket *sock2;
 
-  // Create a thread that runs the function `print_message`. Functions run in 
-  // threads can recieve a single pointer parameter, in this case `message1`.
-  // For our project, we should pass in a pointer to the socket after accepting 
-  // a new connection.
-  int thread1_return = pthread_create(&thread1, NULL, print_message, (void *) message1);
+  // Create the structure to send as a void pointer
+  // IDK if this is the way make this, but all I want 
+  // is to create a `ThreadArg`.
+  struct ThreadArg *arg = malloc(sizeof(struct ThreadArg)); 
+  arg->one = *sock1;
+  arg->two = *sock2;
 
-  // Create another thread that runs the function `print_message` with the parameter `message2`.
-  int thread2_return = pthread_create(&thread1, NULL, print_message, (void *) message2);
+  // Create the thread
+  int thread1_return = pthread_create(&thread1, NULL, use_socket, (void *) arg);
 
-  // Wait the main thread until `thread1` and `thread2`
-  // have finished. Without this, we would `return 0` too fast
-  // and never see the messages printed. We could also use usleep 
-  // but that's not a good solution.
   pthread_join(thread1, NULL);
-  pthread_join(thread2, NULL);
 
-  usleep(3000);
+  usleep(300);
 
   return 0;
 }
 
-void *print_message(void *ptr) {
-  /*
-  Print a character array
-
-  :param *ptr *ptr: Pointer to the start of a character array 
-  :return None:
-  */
-  char *message;
-  message = (char *) ptr;
-  printf("%s \n", message);
+void *use_socket(void *ptr) {
+  struct ThreadArg *thArg = (struct ThreadArg *)ptr;
+  pthread_exit(NULL);
 }
 

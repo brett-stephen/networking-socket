@@ -34,6 +34,16 @@ void stackCheck(string str)
 
 int main(int argc, int argv[])
 {
+  
+    std::string host = "localhost";
+    int port = 30000;
+    
+    std::cout<<"Enter Host name: ";
+    std::cin>>host;
+
+    std::cout<<"Enter Port number: ";
+    std::cin>>port;
+    
    try{
       // Replace "localhost" with the hostname
       // that you're running your server.

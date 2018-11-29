@@ -43,55 +43,55 @@ int main(int argc, int argv[])
 
     std::cout<<"Enter Port number: ";
     std::cin>>port;
-    
-   try{
-      // Replace "localhost" with the hostname
-      // that you're running your server.
-      ClientSocket client_socket("localhost", 30000);
-      ClientSocket client_socket2("localhost", 30001);
+        
+    try{
+        // Replace "localhost" with the hostname
+        // that you're running your server.
+        ClientSocket client_socket("localhost", 30000);
+        ClientSocket client_socket2("localhost", 30001);
+        
+        bool continueTrasfer = true;
       
-      bool continueTrasfer = true;
-      
-      while(continueTrasfer){ 
-	 std::string frame, received_parbit, expected_parbit;
-	 std::string response;
+        while(continueTrasfer){ 
+            std::string frame, received_parbit, expected_parbit;
+            std::string response;
 	 
-	 // Usually in real applications, the following
-	 // will be put into a loop. 
-	 try {
-	    // Receive the frame from server
-	    client_socket >> frame;
+        // Usually in real applications, the following
+        // will be put into a loop. 
+        try {
+            // Receive the frame from server
+            client_socket >> frame;
 
-	    // Split the parity bit from the rest of the frame
-	    received_parbit=frame[0];
-	    frame=frame.substr(1);
-	    
-	    expected_parbit=getParity(frame);
+            // Split the parity bit from the rest of the frame
+            received_parbit=frame[0];
+            frame=frame.substr(1);
+            
+            expected_parbit=getParity(frame);
 
-	    // Select the response and send it to the server
-	    response = (expected_parbit == received_parbit) ? ACK : NAK;
- 
-	    if (response != NAK) {
-	      stackCheck(frame);
-	    }
-	    
+            // Select the response and send it to the server
+            response = (expected_parbit == received_parbit) ? ACK : NAK;
+    
+            if (response != NAK) {
+            stackCheck(frame);
+            }
+            
             if (frame == END_TRANSMISSION) {
-              std::cout << "Reached the end of the file, exiting." << std::endl;
-              continueTrasfer = false; 
-	    }
-	
-	    client_socket2 << response;
-	 }
-	 catch(SocketException&){
-	 }
-
-	 //std::cout << "We received this frame from the server:\n\"" << frame << "\"\n";
-	 //std::cout<<"Client is sending a "<<response<<std::endl<<std::endl;
+                std::cout << "Reached the end of the file, exiting." << std::endl;
+                continueTrasfer = false; 
+            }
+        
+            client_socket2 << response;
+        }
+        catch(SocketException&){
+            // do nothing
+        }
+        //std::cout << "We received this frame from the server:\n\"" << frame << "\"\n";
+        //std::cout<<"Client is sending a "<<response<<std::endl<<std::endl;
       }
-   }
-   catch(SocketException& e){
-      std::cout << "Exception was caught:" << e.description() << "\n";
-   }
+    }
+    catch(SocketException& e){
+        std::cout << "Exception was caught:" << e.description() << "\n";
+    }
 
-   return 0;
+    return 0;
 }

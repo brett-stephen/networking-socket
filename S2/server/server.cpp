@@ -6,6 +6,7 @@
 #include "generator.cpp"
 #include "fileParser.cpp"
 #include <queue>
+#include <thread>
 
 
 bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
@@ -109,16 +110,26 @@ int main(int argc, int argv[])
       ServerSocket Server(30000);
       ServerSocket Ack(30001);
       
-      
       while (true){
-        // the Server object will stop and wait until it gets a request from a client
+        // The socket will stop and wait until it 
+        // recieves a request from a client (blocking).
         ServerSocket new_sock;
         Server.accept(new_sock);
         
         ServerSocket new_sock2;
         Ack.accept(new_sock2);
         
-        transferData(new_sock,new_sock2);
+        std::thread transfer_thread(
+          transferData,
+          // Pass sockets by reference or else they 
+          // get copied which destroys the link.
+          std::ref(new_sock), 
+          std::ref(new_sock2)
+        );
+        // Wait for the thread to finish. 
+        // This seems counter-productive but 
+        // without this nothing works, so...
+        transfer_thread.join();
       
         return 0;
       }

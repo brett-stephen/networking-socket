@@ -130,8 +130,6 @@ int main(int argc, int argv[])
         // This seems counter-productive but 
         // without this nothing works, so...
         transfer_thread.join();
-      
-        return 0;
       }
     }
     catch (SocketException& e){

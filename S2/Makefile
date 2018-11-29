@@ -8,7 +8,7 @@ clientEXE = ./client/ClientSocket.o Socket.o ./client/client.o ./server/ServerSo
 all : serverEXE clientEXE
 
 serverEXE: $(serverEXE)
-	g++ -o serverEXE $(serverEXE)
+	g++ -std=c++11 -pthread -o serverEXE $(serverEXE)
 
 
 clientEXE: $(clientEXE)

@@ -35,20 +35,36 @@ void stackCheck(string str)
 int main(int argc, int argv[])
 {
   
-    std::string host = "localhost";
     int port = 30000;
+    std::string host = "localhost";
+    std::string file_name = "";
     
     std::cout<<"Enter Host name: ";
     std::cin>>host;
 
     std::cout<<"Enter Port number: ";
     std::cin>>port;
+
+    std::cout << "Possible file names: \n"
+        "- sample_aeronautics.txt\n"
+        "- sample_brothers.txt\n"
+        "- sample_empire.txt\n"
+        "- sample_la_casa.txt\n"
+        "- sample_salidarismus.txt\n"
+        "\n";
+
+    std::cout << "Enter file name: ";
+    std::cin >> file_name;
         
     try{
         // Replace "localhost" with the hostname
         // that you're running your server.
         ClientSocket client_socket("localhost", 30000);
         ClientSocket client_socket2("localhost", 30001);
+
+        // Immediately send the file name 
+        // when the server accepts.
+        client_socket << file_name;
         
         bool continueTrasfer = true;
       
@@ -56,36 +72,36 @@ int main(int argc, int argv[])
             std::string frame, received_parbit, expected_parbit;
             std::string response;
 	 
-        // Usually in real applications, the following
-        // will be put into a loop. 
-        try {
-            // Receive the frame from server
-            client_socket >> frame;
+            // Usually in real applications, the following
+            // will be put into a loop. 
+            try {
+                // Receive the frame from server
+                client_socket >> frame;
 
-            // Split the parity bit from the rest of the frame
-            received_parbit=frame[0];
-            frame=frame.substr(1);
-            
-            expected_parbit=getParity(frame);
+                // Split the parity bit from the rest of the frame
+                received_parbit=frame[0];
+                frame=frame.substr(1);
+                
+                expected_parbit=getParity(frame);
 
-            // Select the response and send it to the server
-            response = (expected_parbit == received_parbit) ? ACK : NAK;
-    
-            if (response != NAK) {
-            stackCheck(frame);
-            }
+                // Select the response and send it to the server
+                response = (expected_parbit == received_parbit) ? ACK : NAK;
+
+                if (response != NAK) {
+                    stackCheck(frame);
+                }
+                
+                if (frame == END_TRANSMISSION) {
+                    std::cout << "Reached the end of the file, exiting." << std::endl;
+                    continueTrasfer = false; 
+                }
             
-            if (frame == END_TRANSMISSION) {
-                std::cout << "Reached the end of the file, exiting." << std::endl;
-                continueTrasfer = false; 
+                client_socket2 << response;
             }
-        
-            client_socket2 << response;
-        }
-        catch(SocketException&){
-            // do nothing
-        }
-        //std::cout << "We received this frame from the server:\n\"" << frame << "\"\n";
+            catch(SocketException&){
+                // do nothing
+            }
+            //std::cout << "We received this frame from the server:\n\"" << frame << "\"\n";
         //std::cout<<"Client is sending a "<<response<<std::endl<<std::endl;
       }
     }

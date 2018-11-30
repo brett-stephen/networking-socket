@@ -9,9 +9,9 @@
 #include <thread>
 
 
-bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
+bool transferData(ServerSocket new_sock, ServerSocket new_sock2, std::string file_name)
 {
-  fileParser FileParser;
+  fileParser FileParser(file_name);
   std::cout<< "New connection with client started."<< std::endl;
   
   // For multiple threading, you need to create
@@ -115,6 +115,10 @@ int main(int argc, int argv[])
         // recieves a request from a client (blocking).
         ServerSocket new_sock;
         Server.accept(new_sock);
+
+        // Immediately recieve the file name when a client connects
+        std::string file_name;
+        new_sock >> file_name;
         
         ServerSocket new_sock2;
         Ack.accept(new_sock2);
@@ -124,7 +128,8 @@ int main(int argc, int argv[])
           // Pass sockets by reference or else they 
           // get copied which destroys the link.
           std::ref(new_sock), 
-          std::ref(new_sock2)
+          std::ref(new_sock2),
+          file_name
         );
         // Wait for the thread to finish. 
         // This seems counter-productive but 

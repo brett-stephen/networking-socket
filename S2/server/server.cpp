@@ -7,11 +7,12 @@
 #include "fileParser.cpp"
 #include <queue>
 #include <thread>
+#include <vector>
 
 
-bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
+bool transferData(ServerSocket new_sock, ServerSocket new_sock2, std::string file_name)
 {
-  fileParser FileParser;
+  fileParser FileParser(file_name);
   std::cout<< "New connection with client started."<< std::endl;
   
   // For multiple threading, you need to create
@@ -100,21 +101,38 @@ bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
 }
 
 
-
-int main(int argc, int argv[])
+int main(int argc, char **argv)
 {
+
+    if (argc != 2) {
+      // The script name is always passed as argv[0] 
+      std::cout << "Please enter 1 argument!\n"
+        "1) port #\n"
+        "\n";
+      return 0;
+    }
+
+    // Convert char array to strings
+    std::vector<std::string> all_args(argv, argv + argc);
+
+    int port = std::stoi(all_args[1]); // string -> int
+    int ack_port = port + 1;
+
     std::cout << "runningData....\n"<<endl;
-    
     try{
       // Create the socket
-      ServerSocket Server(30000);
-      ServerSocket Ack(30001);
+      ServerSocket Server(port);
+      ServerSocket Ack(ack_port);
       
       while (true){
         // The socket will stop and wait until it 
         // recieves a request from a client (blocking).
         ServerSocket new_sock;
         Server.accept(new_sock);
+
+        // Immediately recieve the file name when a client connects
+        std::string file_name;
+        new_sock >> file_name;
         
         ServerSocket new_sock2;
         Ack.accept(new_sock2);
@@ -124,7 +142,8 @@ int main(int argc, int argv[])
           // Pass sockets by reference or else they 
           // get copied which destroys the link.
           std::ref(new_sock), 
-          std::ref(new_sock2)
+          std::ref(new_sock2),
+          file_name
         );
         // Wait for the thread to finish. 
         // This seems counter-productive but 

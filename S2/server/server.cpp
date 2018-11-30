@@ -142,6 +142,7 @@ int main(int argc, char **argv)
         // Wait for an ack channel connection 
         ack_socket.accept(client_ack_socket);
         
+        // Create a new thread to serve the client with
         std::thread transfer_thread(
           transferData,
           // Pass sockets by reference or else they 

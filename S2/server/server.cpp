@@ -45,6 +45,10 @@ bool transferData(ServerSocket new_sock, ServerSocket new_sock2, std::string fil
           eof = true;
         }
       } 
+
+      // Wait for 0.2s between transmissions
+      // so we can display multithreading.
+      usleep(20000); 
       
       // Every five frames, one should have a
       // reversed parity bit that should illicit 
@@ -121,34 +125,35 @@ int main(int argc, char **argv)
     std::cout << "runningData....\n"<<endl;
     try{
       // Create the socket
-      ServerSocket Server(port);
-      ServerSocket Ack(ack_port);
+      ServerSocket server_socket(port);
+      ServerSocket ack_socket(ack_port);
+
+      ServerSocket client_socket;
+      ServerSocket client_ack_socket;
       
       while (true){
-        // The socket will stop and wait until it 
-        // recieves a request from a client (blocking).
-        ServerSocket new_sock;
-        Server.accept(new_sock);
+        // Wait for a client to connect (Block)
+        server_socket.accept(client_socket);
 
-        // Immediately recieve the file name when a client connects
+        // Get the requested file name
         std::string file_name;
-        new_sock >> file_name;
+        client_socket >> file_name;
         
-        ServerSocket new_sock2;
-        Ack.accept(new_sock2);
+        // Wait for an ack channel connection 
+        ack_socket.accept(client_ack_socket);
         
         std::thread transfer_thread(
           transferData,
           // Pass sockets by reference or else they 
           // get copied which destroys the link.
-          std::ref(new_sock), 
-          std::ref(new_sock2),
+          std::ref(client_socket), 
+          std::ref(client_ack_socket),
           file_name
         );
-        // Wait for the thread to finish. 
-        // This seems counter-productive but 
-        // without this nothing works, so...
-        transfer_thread.join();
+        // Detatch the new thread from the main 
+        // thread, so the server can go back to
+        // listening. 
+        transfer_thread.detach();
       }
     }
     catch (SocketException& e){

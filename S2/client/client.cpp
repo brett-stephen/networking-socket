@@ -3,15 +3,28 @@
 #include <iostream>
 #include <string>
 #include <queue>
+#include <vector> 
+#include <array>
 #include "./../server/generator.cpp"
+
 
 queue <string> receivedLine;
 
-// Takes a string, pushes it into queue, searches for \n,
-// writes out line if it finds \n
+std::array<std::string, 5> VALID_FILES = {{
+    "sample_aeronautics.txt",
+    "sample_brothers.txt",
+    "sample_empire.txt",
+    "sample_la_casa.txt",
+    "sample_salidarismus.txt"
+}};
+
+
 void stackCheck(string str)
 {
-	//cout<<"pushing string to stack"<<endl;
+    /*
+     * Takes a string, pushes it into queue, searches for 
+     * newline (\n). Writes out line if it finds newline.
+     */
     receivedLine.push(str);
 
     string currentStr = receivedLine.back();
@@ -28,42 +41,59 @@ void stackCheck(string str)
             cout<<receivedLine.front();
             receivedLine.pop();
         }
-        //cout<<"removing queue "<<receivedLine.size()<<endl;
     }
 }
 
-int main(int argc, int argv[])
+bool is_valid_filename(std::string file_name) {
+    /*
+     * Assert file name is within list of valid file names
+     */
+    for (int i=0; i < VALID_FILES.size(); i++) {
+        if (file_name == VALID_FILES[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(int argc, char *argv[])
 {
-  
-    int port = 30000;
-    std::string host = "localhost";
-    std::string file_name = "";
-    
-    std::cout<<"Enter Host name: ";
-    std::cin>>host;
+    if (argc != 4) {
+        // The script name is always passed as argv[0] 
+        std::cout << "Please pass 3 arguments!\n"
+            "  1) port #\n"
+            "  2) host \n"
+            "  3) file name\n"
+            "\n";
+        return 0;
+    }
 
-    std::cout<<"Enter Port number: ";
-    std::cin>>port;
+    // Convert char array args to strings
+    std::vector<std::string> all_args(argv, argv + argc);
 
-    std::cout << "Possible file names: \n"
-        "- sample_aeronautics.txt\n"
-        "- sample_brothers.txt\n"
-        "- sample_empire.txt\n"
-        "- sample_la_casa.txt\n"
-        "- sample_salidarismus.txt\n"
-        "\n";
+    int port = std::stoi(all_args[1]); // string -> int 
+    int ack_port = port + 1; 
+    std::string host = all_args[2]; 
+    std::string file_name = all_args[3];
 
-    std::cout << "Enter file name: ";
-    std::cin >> file_name;
-        
+    if (!is_valid_filename(file_name)) {
+        std::cout << "Enter a valid file name: \n"
+            "- sample_aeronautics.txt\n"
+            "- sample_brothers.txt\n"
+            "- sample_empire.txt\n"
+            "- sample_la_casa.txt\n"
+            "- sample_salidarismus.txt\n"
+            "\n";
+        return 0;
+    }
+
     try{
         // Replace "localhost" with the hostname
         // that you're running your server.
-        ClientSocket client_socket("localhost", 30000);
-        ClientSocket client_socket2("localhost", 30001);
+        ClientSocket client_socket(host, port);
+        ClientSocket client_socket2(host, ack_port);
 
-        // Immediately send the file name 
-        // when the server accepts.
+        // Immediately send the file name when the server accepts.
         client_socket << file_name;
         
         bool continueTrasfer = true;

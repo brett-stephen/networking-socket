@@ -102,26 +102,40 @@ bool transferData(ServerSocket new_sock, ServerSocket new_sock2)
   return true;
 }
 
-int main(int argc, int argv[])
+int main(int argc, char **argv)
 {
+
+    if (argc != 2) {
+      // The script name is always passed as argv[0] 
+      std::cout << "Please enter 1 argument!\n"
+        "1) port #\n"
+        "\n";
+      return 0;
+    }
+
+    // Convert char array to strings
+    std::vector<std::string> all_args(argv, argv + argc);
+
+    int port = std::stoi(all_args[1]); // string -> int
+    int ack_port = port + 1;
+
   std::cout << "runningData....\n";
   
   try{
     // Create the socket
-    ServerSocket Server(30000);
-    ServerSocket Ack(30001);
+    ServerSocket server_socket(port);
+    ServerSocket ack_socket(ack_port);
     
+	ServerSocket client_socket;
+	ServerSocket client_ack_socket;
     
     while (true){
-      // the Server object will stop and wait until it gets a request from a client
-      ServerSocket new_sock;
-      Server.accept(new_sock);
-
-      ServerSocket new_sock2;
-      Ack.accept(new_sock2);
-
-      transferData(new_sock,new_sock2);
-
+		// Wait for the client to send a request 
+		server_socket.accept(client_socket);
+		// Wait for ack socket connection
+		ack_socket.accept(client_ack_socket);
+		// Send the data
+		transferData(client_socket, client_ack_socket);
       }
     }
   catch (SocketException& e){

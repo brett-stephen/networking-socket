@@ -3,16 +3,19 @@
 #include <iostream>
 #include <string>
 #include <queue>
+#include <vector> 
+#include <array>
 #include "./../server/generator.cpp"
-#include <time.h>
+
 
 queue <string> receivedLine;
 
-// Takes a string, pushes it into queue, searches for \n,
-// writes out line if it finds \n
 void stackCheck(string str)
 {
-	//cout<<"pushing string to stack"<<endl;
+    /*
+     * Takes a string, pushes it into queue, searches for 
+     * newline (\n). Writes out line if it finds newline.
+     */
     receivedLine.push(str);
 
     string currentStr = receivedLine.back();
@@ -29,7 +32,6 @@ void stackCheck(string str)
             cout<<receivedLine.front();
             receivedLine.pop();
         }
-        //cout<<"removing queue "<<receivedLine.size()<<endl;
     }
 }
 
@@ -51,51 +53,57 @@ int main(int argc, char *argv[])
     int ack_port = port + 1; 
     std::string host = all_args[2]; 
 
-   try{
-      // Replace "localhost" with the hostname
-      // that you're running your server.
-      ClientSocket client_socket(host, port);
-      ClientSocket client_socket2(host, ack_port);
+    try{
+        // Replace "localhost" with the hostname
+        // that you're running your server.
+        ClientSocket client_socket(host, port);
+        ClientSocket client_socket2(host, ack_port);
+
+        // Immediately send the file name when the server accepts.
+        client_socket << "sample_aeronautics.txt";
+        
+        bool continueTrasfer = true;
       
-      while(true){ 
-         std::string frame, received_parbit, expected_parbit;
-         std::string response;
-         // Usually in real applications, the following
-         // will be put into a loop. 
-         try {
-            // Receive the frame from server
-            client_socket >> frame;
+        while(continueTrasfer){ 
+            std::string frame, received_parbit, expected_parbit;
+            std::string response;
+	 
+            // Usually in real applications, the following
+            // will be put into a loop. 
+            try {
+                // Receive the frame from server
+                client_socket >> frame;
 
-            usleep(2000);
+                // Split the parity bit from the rest of the frame
+                received_parbit=frame[0];
+                frame=frame.substr(1);
+                
+                expected_parbit=getParity(frame);
 
-            // Split the parity bit from the rest of the frame
-            received_parbit=frame[0];
-            frame=frame.substr(1);
+                // Select the response and send it to the server
+                response = (expected_parbit == received_parbit) ? ACK : NAK;
+
+                if (response != NAK) {
+                    stackCheck(frame);
+                }
+                
+                if (frame == END_TRANSMISSION) {
+                    std::cout << "Reached the end of the file, exiting." << std::endl;
+                    continueTrasfer = false; 
+                }
             
-            expected_parbit=getParity(frame);
-
-            // Select the response and send it to the server
-            response = (expected_parbit == received_parbit) ? ACK : NAK;
-      
-            if (response != NAK) {
-               stackCheck(frame);
+                client_socket2 << response;
             }
-            
-            if (frame == END_TRANSMISSION) {
-               std::cout << "Reached the end of the file, exiting." << std::endl;
-               client_socket2 << response;
-               return 0;
+            catch(SocketException&){
+                // do nothing
             }
-            client_socket2 << response;
-         }
-         catch(SocketException&){
-            // Do nothing
-         }
-         std::cout<<"Client is sending a "<<response<<std::endl<<std::endl;
+            //std::cout << "We received this frame from the server:\n\"" << frame << "\"\n";
+        //std::cout<<"Client is sending a "<<response<<std::endl<<std::endl;
       }
-   }
-   catch(SocketException& e){
-      std::cout << "Exception was caught:" << e.description() << "\n";
-   }
-   return 0;
+    }
+    catch(SocketException& e){
+        std::cout << "Exception was caught:" << e.description() << "\n";
+    }
+
+    return 0;
 }

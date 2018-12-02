@@ -1,7 +1,7 @@
 # Makefile for the socket programming tutorial 
 #
 CXX=g++
-CXXFLAGS=-std=c++11
+CXXFLAGS=-Wl,--no-as-needed -std=c++11 -pthread
 serverEXE = ./server/ServerSocket.o Socket.o ./server/server.o ./server/ServerSocket.h Socket.h SocketException.h 
 
 
@@ -10,11 +10,11 @@ clientEXE = ./client/ClientSocket.o Socket.o ./client/client.o ./server/ServerSo
 all : serverEXE clientEXE
 
 serverEXE: $(serverEXE)
-	g++ -std=c++11 -o serverEXE $(serverEXE)
+	g++ -std=c++11 -pthread -o serverEXE $(serverEXE)
 
 
 clientEXE: $(clientEXE)
-	g++ -std=c++11 -o clientEXE $(clientEXE)
+	g++ -std=c++11  -pthread -o clientEXE $(clientEXE)
 
 
 Socket: Socket.cpp 

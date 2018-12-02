@@ -1,7 +1,5 @@
 #include <fstream>
-
 #include <cmath>
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -13,7 +11,7 @@ using namespace std;
 class fileParser
 {
     public:
-    fileParser();
+    fileParser(std::string file_name);
    ~fileParser();
     vector<string> read();
     string readString();
@@ -35,9 +33,9 @@ class fileParser
     bool eof;
 };
 
-fileParser::fileParser()
+fileParser::fileParser(std::string file_name)
 {
-    file.open("test_networking_doc.txt");
+    file.open("../sample_files/" + file_name);
     if (file.is_open()){
         //cout<<"The file has been found"<<endl;
     }
@@ -78,7 +76,6 @@ return frameCount;
 //Input: none
 //Output: A vector which contains frames of a max size of 64 characters for
 //one text line
-
 vector<string> fileParser::read(){
 
     string line;

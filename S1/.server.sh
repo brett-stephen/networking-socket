@@ -1,7 +1,7 @@
 #!/bin/sh
+
+./serverEXE $1 
+
 "$@"
-
-./serverEXE $1
-
 exec "$SHELL"
 

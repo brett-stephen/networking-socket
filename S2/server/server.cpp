@@ -46,9 +46,9 @@ bool transferData(ServerSocket new_sock, ServerSocket new_sock2, std::string fil
         }
       } 
 
-      // Wait for 0.2s between transmissions
+      // Wait for 0.15s between transmissions
       // so we can display multithreading.
-      usleep(20000); 
+      usleep(15000); 
       
       // Every five frames, one should have a
       // reversed parity bit that should illicit 

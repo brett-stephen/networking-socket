@@ -98,10 +98,18 @@ vector<string> fileParser::read(){
         fileLine.pop_back();
     }
 
+    int to_add = 64;
+    int total = 0;
     for (int i=0; i<=b; i++){
-        string sub = line.substr(j,j+64);
+        if (i == b - 1) {
+          to_add = (int)len - total;
+	} else {
+          to_add = 64;
+	}
+        string sub = line.substr(j, to_add);
         fileLine.push_back(sub);
-        j=j+ 64;
+        j=j+ to_add;
+	total += to_add;
         temp=fileLine;
     }
     

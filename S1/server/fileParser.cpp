@@ -99,7 +99,7 @@ vector<string> fileParser::read(){
     }
 
     for (int i=0; i<=b; i++){
-        string sub = line.substr(j,j+64);
+        string sub = line.substr(j, 64);
         fileLine.push_back(sub);
         j=j+ 64;
         temp=fileLine;
